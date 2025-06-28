@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'pages/welcome_page.dart';
 import 'pages/index_page.dart';
 import 'pages/upload_page.dart';
 import 'pages/results_page.dart';
@@ -19,7 +18,7 @@ class StrideApp extends StatelessWidget {
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) => const WelcomePage(),
+        builder: (context, state) => const IndexPage(),
       ),
       GoRoute(
         path: '/home',

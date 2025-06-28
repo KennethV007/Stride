@@ -96,56 +96,43 @@ class _IndexPageState extends State<IndexPage>
   }
 
   Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // Logo
-        Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
+    return Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF8B5CF6), Color(0xFF06B6D4)],
+              ),
+            ),
+            child: Container(
+              margin: const EdgeInsets.all(1),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF8B5CF6), Color(0xFF06B6D4)],
-                ),
+                color: const Color(0xFF0F172A),
+                borderRadius: BorderRadius.circular(11),
               ),
-              child: Container(
-                margin: const EdgeInsets.all(1),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0F172A),
-                  borderRadius: BorderRadius.circular(11),
-                ),
-                child: const Icon(
-                  Icons.directions_run,
-                  color: Color(0xFF8B5CF6),
-                  size: 20,
-                ),
+              child: const Icon(
+                Icons.directions_run,
+                color: Color(0xFF8B5CF6),
+                size: 20,
               ),
             ),
-            const SizedBox(width: 12),
-            const Text(
-              'Stride',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        // User menu placeholder (will be enhanced when auth is implemented)
-        IconButton(
-          onPressed: () => context.go('/'),
-          icon: Icon(
-            Icons.account_circle_outlined,
-            color: Colors.white.withOpacity(0.7),
-            size: 28,
           ),
-          tooltip: 'Account',
-        ),
-      ],
+          const SizedBox(width: 12),
+          const Text(
+            'Stride',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
