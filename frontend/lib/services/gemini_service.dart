@@ -456,4 +456,145 @@ The robot should be:
 Style: High-quality sci-fi robot portrait art, detailed character design, inspiring and futuristic atmosphere, chest-up composition, advanced AI coach with technological interfaces and motivational presence.
 ''';
   }
+
+  static Future<Uint8List?> generateMandalorianCoachImage({
+    required String region,
+    required String weapon,
+    required String armor,
+    required String motivation,
+    required String warriorType,
+  }) async {
+    try {
+      // Create a detailed prompt for the Mandalorian coach image
+      final prompt = _buildMandalorianPrompt(region, weapon, armor, motivation, warriorType);
+      
+      final response = await http.post(
+        Uri.parse('$_baseUrl?key=$_apiKey'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'contents': [
+            {
+              'parts': [
+                {
+                  'text': prompt,
+                }
+              ]
+            }
+          ],
+          'generationConfig': {
+            'responseModalities': ['TEXT', 'IMAGE'],
+            'temperature': 0.8,
+            'topK': 40,
+            'topP': 0.95,
+            'maxOutputTokens': 1024,
+          }
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        
+        // Look for image data in the response parts
+        final candidates = data['candidates'] as List?;
+        if (candidates != null && candidates.isNotEmpty) {
+          final parts = candidates[0]['content']['parts'] as List?;
+          if (parts != null) {
+            for (final part in parts) {
+              if (part['inlineData'] != null) {
+                final imageData = part['inlineData']['data'] as String;
+                return base64Decode(imageData);
+              }
+            }
+          }
+        }
+        
+        print('No image data found in response');
+        return null;
+      } else {
+        print('Error: ${response.statusCode} - ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Error generating Mandalorian coach image: $e');
+      return null;
+    }
+  }
+
+  static String _buildMandalorianPrompt(String region, String weapon, String armor, String motivation, String warriorType) {
+    // Map regions to visual descriptions
+    final regionDescriptions = {
+      'Desert Wastes': 'harsh desert landscape with sand dunes, rocky outcrops, and scorching sun effects',
+      'Sky Bastion': 'floating aerial fortress with clouds, wind currents, and high-altitude atmosphere',
+      'Outer Rim': 'remote space frontier with distant stars, asteroid fields, and frontier outpost aesthetics',
+      'Iron Hills': 'militaristic mountain fortress with metallic structures, defensive positions, and industrial elements',
+      'Frozen Canyons': 'ice-covered canyon terrain with glacial formations, frost effects, and cold blue lighting',
+    };
+
+    // Map weapons to visual descriptions
+    final weaponDescriptions = {
+      'Blaster rifle': 'advanced energy rifle with tactical scope and precision targeting systems',
+      'Wrist rockets': 'wrist-mounted rocket launchers with explosive projectile systems',
+      'Vibroblade': 'high-frequency vibrating sword with energy-enhanced cutting edge',
+      'Grapple wire': 'retractable grappling hook system with tactical deployment gear',
+      'Jetpack flamethrower': 'jetpack-integrated flamethrower with aerial combat capabilities',
+    };
+
+    // Map armor materials to visual effects
+    final armorEffects = {
+      'Beskar steel': 'legendary silver-gray Mandalorian metal with distinctive shine and battle-tested durability',
+      'Phantom alloy': 'semi-transparent lightweight material with stealth-like shimmer effects',
+      'Scarhide plating': 'battle-scarred armor with visible damage marks and weathered durability',
+      'Plasma-infused glass': 'translucent armor with glowing plasma energy coursing through transparent sections',
+      'Reclaimed scrap metal': 'makeshift armor assembled from various salvaged metal pieces with creative engineering',
+    };
+
+    // Map motivations to behavioral traits
+    final motivationTraits = {
+      'Honor and legacy': 'noble bearing with ancestral pride, honorable stance, and traditional Mandalorian symbols',
+      'Revenge': 'intense, focused expression with determined posture and vengeful energy',
+      'Glory and fame': 'confident, heroic stance with legendary presence and achievement displays',
+      'Protecting the innocent': 'protective posture with caring determination and guardian-like presence',
+      'Collecting the bounty': 'calculating hunter expression with tactical awareness and professional demeanor',
+    };
+
+    // Map warrior types to visual characteristics
+    final warriorTypeTraits = {
+      'Lone wolf sniper': 'solitary stance with precision rifle and focused, patient expression',
+      'Tactician and squad leader': 'commanding presence with tactical displays and leadership posture',
+      'Relentless tracker': 'alert, hunting stance with tracking equipment and determined pursuit energy',
+      'Gadget-based saboteur': 'tech-savvy appearance with various gadgets and infiltration equipment',
+      'Noble defender of the creed': 'traditional Mandalorian stance with ceremonial elements and honor symbols',
+    };
+
+    return '''
+Create a detailed Mandalorian coach character portrait with these specific attributes:
+
+ORIGIN REGION: From $region - ${regionDescriptions[region]}
+PRIMARY WEAPON: Wielding ${weaponDescriptions[weapon]}
+ARMOR MATERIAL: Made of $armor - ${armorEffects[armor]}
+WARRIOR MOTIVATION: $motivation - ${motivationTraits[motivation]}
+WARRIOR TYPE: $warriorType - ${warriorTypeTraits[warriorType]}
+
+The Mandalorian should be:
+- A skilled, inspiring warrior coach that would motivate runners and athletes
+- Always wearing the iconic Mandalorian helmet with T-shaped visor
+- Shown as a portrait from the chest/shoulders up (head and upper torso only)
+- Standing in a confident, coaching pose with upper body visible
+- Set against a background that reflects their $region origin
+- Detailed Star Wars-style art with authentic Mandalorian aesthetics
+- Professional and motivational appearance suitable for a fitness coach
+- The overall composition should feel empowering and disciplined
+- Portrait orientation focusing on the helmeted face and upper armor details
+- Display their $armor armor material through realistic textures and effects
+- Show their $weapon weapon prominently in the composition
+- Express their $motivation motivation through posture and stance
+- Incorporate visual elements that reflect their $warriorType fighting style
+- Include subtle Mandalorian cultural symbols and clan markings
+- Authentic Mandalorian armor design with weathering and battle history
+
+Style: High-quality Star Wars Mandalorian portrait art, detailed character design, inspiring and disciplined atmosphere, chest-up composition, authentic Mandalorian warrior with traditional helmet and armor.
+''';
+  }
 } 

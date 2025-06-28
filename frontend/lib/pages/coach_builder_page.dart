@@ -25,6 +25,7 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
   String? _selectedPersonality;
   String? _selectedWeapon;
   String? _selectedArmor;
+  String? _selectedFightingStyle;
 
   // User selections for other coach types (placeholder for now)
   Map<String, String?> _ninjaSelections = {
@@ -134,7 +135,9 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
         }
         return true;
       case 6:
-        if (_selectedCoachType == 'Ninja') {
+        if (_selectedCoachType == 'Knight') {
+          return _selectedFightingStyle != null;
+        } else if (_selectedCoachType == 'Ninja') {
           return _ninjaSelections['personality'] != null;
         } else if (_selectedCoachType == 'Robot') {
           return _robotSelections['personality'] != null;
@@ -154,7 +157,8 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
       return _selectedRegion != null &&
              _selectedPersonality != null &&
              _selectedWeapon != null &&
-             _selectedArmor != null;
+             _selectedArmor != null &&
+             _selectedFightingStyle != null;
     } else if (_selectedCoachType == 'Ninja') {
       return _ninjaSelections['village'] != null &&
              _ninjaSelections['weapon'] != null &&
@@ -241,8 +245,8 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
   }
 
   Future<void> _finishCoachCreation() async {
-    // For non-Knight, non-Ninja, and non-Robot coaches, show a coming soon dialog
-    if (_selectedCoachType != 'Knight' && _selectedCoachType != 'Ninja' && _selectedCoachType != 'Robot') {
+    // For non-Knight, non-Ninja, non-Robot, and non-Mandalorian coaches, show a coming soon dialog
+    if (_selectedCoachType != 'Knight' && _selectedCoachType != 'Ninja' && _selectedCoachType != 'Robot' && _selectedCoachType != 'Mandalorian') {
       _showComingSoonDialog();
       return;
     }
@@ -277,7 +281,9 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
                       ? 'Creating a ${_ninjaSelections['personality']} ninja from ${_ninjaSelections['village']}...'
                       : _selectedCoachType == 'Robot'
                           ? 'Creating a ${_robotSelections['personality']} robot from ${_robotSelections['lab']}...'
-                          : 'Creating your ${_selectedCoachType} coach...',
+                          : _selectedCoachType == 'Mandalorian'
+                              ? 'Creating a ${_mandalorianSelections['warrior_type']} Mandalorian from ${_mandalorianSelections['region']}...'
+                              : 'Creating your ${_selectedCoachType} coach...',
               style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12),
               textAlign: TextAlign.center,
             ),
@@ -315,6 +321,15 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
           power: _robotSelections['power']!,
           personality: _robotSelections['personality']!,
         );
+      } else if (_selectedCoachType == 'Mandalorian') {
+        // Generate the Mandalorian coach image
+        imageBytes = await GeminiService.generateMandalorianCoachImage(
+          region: _mandalorianSelections['region']!,
+          weapon: _mandalorianSelections['weapon']!,
+          armor: _mandalorianSelections['armor']!,
+          motivation: _mandalorianSelections['motivation']!,
+          warriorType: _mandalorianSelections['warrior_type']!,
+        );
       }
 
       setState(() {
@@ -332,6 +347,8 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
         _showNinjaCoachResults();
       } else if (_selectedCoachType == 'Robot') {
         _showRobotCoachResults();
+      } else if (_selectedCoachType == 'Mandalorian') {
+        _showMandalorianCoachResults();
       }
     } catch (e) {
       setState(() {
@@ -562,6 +579,7 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
                         _selectedPersonality = null;
                         _selectedWeapon = null;
                         _selectedArmor = null;
+                        _selectedFightingStyle = null;
                         _ninjaSelections = {
                           'village': null,
                           'weapon': null,
@@ -751,6 +769,13 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
                             'power': null,
                             'personality': null,
                           };
+                          _mandalorianSelections = {
+                            'region': null,
+                            'weapon': null,
+                            'armor': null,
+                            'motivation': null,
+                            'warrior_type': null,
+                          };
                           _currentSlide = 0;
                           _generatedKnightImage = null;
                         });
@@ -919,6 +944,189 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
                             'emotions': null,
                             'power': null,
                             'personality': null,
+                          };
+                          _mandalorianSelections = {
+                            'region': null,
+                            'weapon': null,
+                            'armor': null,
+                            'motivation': null,
+                            'warrior_type': null,
+                          };
+                          _currentSlide = 0;
+                          _generatedKnightImage = null;
+                        });
+                        _pageController.animateToPage(
+                          0,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.purple.withOpacity(0.2),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      ),
+                      child: const Text(
+                        'Create Another',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        context.go('/');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.purple,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        'Return Home',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showMandalorianCoachResults() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.black.withOpacity(0.9),
+        contentPadding: const EdgeInsets.all(16),
+        content: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.85,
+          height: MediaQuery.of(context).size.height * 0.8,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  '🚀 Your Mandalorian Coach is Ready!',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                
+                // Display the generated image or a placeholder
+                Container(
+                  height: 280,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.purple.withOpacity(0.3)),
+                  ),
+                  child: _generatedKnightImage != null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.memory(
+                            _generatedKnightImage!,
+                            fit: BoxFit.cover,
+                            alignment: Alignment.topCenter,
+                          ),
+                        )
+                      : Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            gradient: LinearGradient(
+                              colors: [Colors.purple.withOpacity(0.3), Colors.cyan.withOpacity(0.3)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          ),
+                          child: const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.image_not_supported, color: Colors.white54, size: 48),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Image generation in progress...',
+                                  style: TextStyle(color: Colors.white54),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Show selections summary
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.purple.withOpacity(0.3)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Your Mandalorian\'s Attributes:',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      _buildAttributeRow('Region', _mandalorianSelections['region'] ?? 'Not selected', '🌍'),
+                      _buildAttributeRow('Weapon', _mandalorianSelections['weapon'] ?? 'Not selected', '🔫'),
+                      _buildAttributeRow('Armor', _mandalorianSelections['armor'] ?? 'Not selected', '🛡️'),
+                      _buildAttributeRow('Motivation', _mandalorianSelections['motivation'] ?? 'Not selected', '💪'),
+                      _buildAttributeRow('Warrior Type', _mandalorianSelections['warrior_type'] ?? 'Not selected', '🚀'),
+                    ],
+                  ),
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Action buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        setState(() {
+                          _selectedCoachType = null;
+                          _selectedRegion = null;
+                          _selectedPersonality = null;
+                          _selectedWeapon = null;
+                          _selectedArmor = null;
+                          _ninjaSelections = {
+                            'village': null,
+                            'weapon': null,
+                            'skill': null,
+                            'element': null,
+                            'personality': null,
+                          };
+                          _robotSelections = {
+                            'lab': null,
+                            'function': null,
+                            'emotions': null,
+                            'power': null,
+                            'personality': null,
+                          };
+                          _mandalorianSelections = {
+                            'region': null,
+                            'weapon': null,
+                            'armor': null,
+                            'motivation': null,
+                            'warrior_type': null,
                           };
                           _currentSlide = 0;
                           _generatedKnightImage = null;
@@ -1145,7 +1353,7 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
       case 5:
         return _buildArmorSlide();
       case 6:
-        return _buildFinalCustomizationSlide();
+        return _buildFightingStyleSlide();
       case 7:
         return _buildSummarySlide();
       default:
@@ -2776,6 +2984,64 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
           type['icon']!,
           _mandalorianSelections['warrior_type'] == type['name'],
           () => setState(() => _mandalorianSelections['warrior_type'] = type['name']),
+        )).toList(),
+      ],
+    );
+  }
+
+  Widget _buildFightingStyleSlide() {
+    // Route to appropriate slide based on coach type
+    if (_selectedCoachType == 'Ninja') {
+      return _buildNinjaPersonalitySlide();
+    } else if (_selectedCoachType == 'Robot') {
+      return _buildRobotPersonalitySlide();
+    } else if (_selectedCoachType == 'Mandalorian') {
+      return _buildMandalorianWarriorTypeSlide();
+    } else if (_selectedCoachType != 'Knight') {
+      return _buildPlaceholderSlide('Fighting Style Selection', 'This will be customized for $_selectedCoachType coaches');
+    }
+    
+    final fightingStyles = [
+      {'name': 'Berserker', 'description': 'aggressive, all-out offensive style', 'icon': '⚔️'},
+      {'name': 'Guardian', 'description': 'defensive, protective combat approach', 'icon': '🛡️'},
+      {'name': 'Duelist', 'description': 'precise, elegant one-on-one combat', 'icon': '🤺'},
+      {'name': 'Tactician', 'description': 'strategic, calculated battlefield control', 'icon': '🧠'},
+      {'name': 'Paladin', 'description': 'righteous, honor-bound fighting style', 'icon': '✨'},
+    ];
+
+    return Column(
+      children: [
+        const Icon(
+          Icons.sports_martial_arts,
+          color: Color(0xFF8B5CF6),
+          size: 48,
+        ),
+        const SizedBox(height: 24),
+        const Text(
+          'What is your knight\'s fighting style?',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'Choose the combat approach that defines your knight',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white.withOpacity(0.7),
+          ),
+        ),
+        const SizedBox(height: 32),
+        ...fightingStyles.map((style) => _buildChoiceButton(
+          style['name']!,
+          style['description']!,
+          style['icon']!,
+          _selectedFightingStyle == style['name'],
+          () => setState(() => _selectedFightingStyle = style['name']),
         )).toList(),
       ],
     );
