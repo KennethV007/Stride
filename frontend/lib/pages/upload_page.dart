@@ -68,22 +68,10 @@ class _UploadPageState extends State<UploadPage> {
         children: [
           GestureDetector(
             onTap: () => context.go('/home'),
-            child: const Row(
-              children: [
-                Icon(
-                  Icons.arrow_back,
-                  color: Color(0xFF06B6D4),
-                  size: 20,
-                ),
-                SizedBox(width: 8),
-                Text(
-                  'Back to Home',
-                  style: TextStyle(
-                    color: Color(0xFF06B6D4),
-                    fontSize: 16,
-                  ),
-                ),
-              ],
+            child: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+              size: 24,
             ),
           ),
         ],
