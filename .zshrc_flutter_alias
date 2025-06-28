@@ -1,0 +1,7 @@
+# Add this to your ~/.zshrc file
+alias flutter-frontend='cd frontend && flutter'
+
+# Usage examples:
+# flutter-frontend run -d web-server --web-port 3000
+# flutter-frontend build web
+# flutter-frontend pub get 
