@@ -1,0 +1,48 @@
+backend/venv
+backend/__pycache__
+.env
+.python-version
+# Flutter & Dart tool directories
+.dart_tool/
+.packages
+.pub-cache/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos_tool/
+
+# IDE files
+.idea/
+*.iml
+
+# VS Code settings
+.vscode/
+
+# macOS system files
+.DS_Store
+
+# Android/Gradle
+android/.gradle/
+android/app/*.iml
+android/local.properties
+android/.idea/
+
+# iOS/Xcode
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/ServiceDefinitions.json
+Runner.xcworkspace/
+xcuserdata/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Flutter build outputs
+**/build/
