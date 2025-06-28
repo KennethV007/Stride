@@ -37,7 +37,7 @@ if not fps or fps == 0:
 print(f"Video properties - Width: {width}, Height: {height}, FPS: {fps}")
 
 # Use a widely supported codec for mp4
-fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+fourcc = cv2.VideoWriter_fourcc(*'avc1')
 out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
 frame_count = 0
@@ -76,6 +76,7 @@ except Exception as e:
 cap.release()
 out.release()
 cv2.destroyAllWindows()
+
 
 print(json.dumps({
     "input_video": input_path,
