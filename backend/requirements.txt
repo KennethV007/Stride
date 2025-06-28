@@ -4,4 +4,8 @@ python-multipart
 supabase
 mediapipe
 opencv-python
-python-dotenv 
+python-dotenv
+pydantic[email]
+python-jose[cryptography]
+passlib[bcrypt]
+requests 
