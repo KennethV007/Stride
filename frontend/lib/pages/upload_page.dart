@@ -15,48 +15,59 @@ class _UploadPageState extends State<UploadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0F172A),
-              Color(0xFF1E293B),
-              Color(0xFF0F172A),
-            ],
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF181A20),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xFF181A20),
+                  const Color(0xFF4F8CFF).withOpacity(0.25),
+                  const Color(0xFF7F5FFF).withOpacity(0.25),
+                  const Color(0xFFFF5CA8).withOpacity(0.18),
+                  const Color(0xFF181A20),
+                ],
+                stops: const [0.0, 0.3, 0.6, 0.85, 1.0],
+              ),
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              _buildHeader(),
-              
-              // Main Content
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 48),
-                        _buildTitle(),
-                        const SizedBox(height: 32),
-                        _buildUploadZone(),
-                        const SizedBox(height: 32),
-                        _buildMotivationalCopy(),
-                        const SizedBox(height: 24),
-                        _buildGpsToggle(),
-                        const SizedBox(height: 32),
-                      ],
+          Container(
+            color: Colors.black.withOpacity(0.18),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                // Header
+                _buildHeader(),
+                
+                // Main Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 48),
+                          _buildTitle(),
+                          const SizedBox(height: 32),
+                          _buildUploadZone(),
+                          const SizedBox(height: 32),
+                          _buildMotivationalCopy(),
+                          const SizedBox(height: 24),
+                          _buildGpsToggle(),
+                          const SizedBox(height: 32),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -137,10 +148,20 @@ class _UploadPageState extends State<UploadPage> {
                   color: const Color(0xFF1E293B),
                   borderRadius: BorderRadius.circular(39),
                 ),
-                child: const Icon(
-                  Icons.videocam,
-                  color: Color(0xFF06B6D4),
-                  size: 32,
+                child: ShaderMask(
+                  shaderCallback: (Rect bounds) {
+                    return LinearGradient(
+                      colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ).createShader(bounds);
+                  },
+                  blendMode: BlendMode.srcIn,
+                  child: const Icon(
+                    Icons.videocam,
+                    color: Colors.white,
+                    size: 32,
+                  ),
                 ),
               ),
             ),
@@ -186,7 +207,7 @@ class _UploadPageState extends State<UploadPage> {
               child: Ink(
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF06B6D4), Color(0xFF8B5CF6)],
+                    colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
                   ),
                   borderRadius: BorderRadius.circular(24),
                 ),
@@ -196,7 +217,7 @@ class _UploadPageState extends State<UploadPage> {
                     vertical: 12,
                   ),
                   alignment: Alignment.center,
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.upload_file, color: Colors.white),
@@ -221,7 +242,7 @@ class _UploadPageState extends State<UploadPage> {
             Container(
               height: 1,
               width: double.infinity,
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
             ),
             
             const SizedBox(height: 20),
@@ -243,7 +264,7 @@ class _UploadPageState extends State<UploadPage> {
               child: Ink(
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF8B5CF6), Color(0xFF06B6D4)],
+                    colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
                   ),
                   borderRadius: BorderRadius.circular(24),
                 ),
@@ -253,7 +274,7 @@ class _UploadPageState extends State<UploadPage> {
                     vertical: 12,
                   ),
                   alignment: Alignment.center,
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.video_camera_front, color: Colors.white),
@@ -278,10 +299,10 @@ class _UploadPageState extends State<UploadPage> {
   }
 
   Widget _buildMotivationalCopy() {
-    return const GradientText(
+    return GradientText(
       'Stride smarter, not harder.',
-      colors: [Color(0xFF06B6D4), Color(0xFF8B5CF6)],
-      style: TextStyle(
+      colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+      style: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w500,
       ),
@@ -293,9 +314,9 @@ class _UploadPageState extends State<UploadPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -304,7 +325,7 @@ class _UploadPageState extends State<UploadPage> {
             'Include recent GPS stats',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
           GestureDetector(
@@ -318,8 +339,8 @@ class _UploadPageState extends State<UploadPage> {
               height: 24,
               decoration: BoxDecoration(
                 color: _includeGpsStats
-                    ? const Color(0xFF06B6D4)
-                    : Colors.white.withOpacity(0.3),
+                    ? const Color(0xFF7F5FFF)
+                    : Colors.white.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: AnimatedAlign(
