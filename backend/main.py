@@ -1,10 +1,16 @@
 import dotenv
 import os
 from supabase import create_client, Client
+from fastapi import FastAPI
 
 
-if __name__ == "__main__":
-    dotenv.load_dotenv()
+dotenv.load_dotenv()
+app = FastAPI()
 
-    supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
 
+# supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+
+    
