@@ -234,22 +234,28 @@ class _IndexPageState extends State<IndexPage>
   Widget _buildFeatures() {
     final features = [
       {
+        'icon': Icons.person_add,
+        'title': 'Generate Coach',
+        'description': 'Create your personalized AI running coach',
+        'step': '1',
+      },
+      {
         'icon': Icons.upload_file,
         'title': 'Upload Video',
         'description': 'Record 10 seconds of your running form',
-        'step': '1',
+        'step': '2',
       },
       {
         'icon': Icons.flash_on,
         'title': 'AI Analysis',
         'description': 'Advanced ML analyzes your biomechanics',
-        'step': '2',
+        'step': '3',
       },
       {
         'icon': Icons.track_changes,
         'title': 'Get Feedback',
         'description': 'Personalized coaching for improvement from Gemini AI',
-        'step': '3',
+        'step': '4',
       },
     ];
 
