@@ -32,7 +32,7 @@ class NotFoundPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               GestureDetector(
-                onTap: () => context.go('/'),
+                onTap: () => context.go('/home'),
                 child: const Text(
                   'Return to Home',
                   style: TextStyle(

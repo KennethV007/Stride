@@ -622,7 +622,7 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
-                      context.go('/');
+                      context.go('/home');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple,
@@ -797,7 +797,7 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
                     ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pop();
-                        context.go('/');
+                        context.go('/home');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.purple,
@@ -973,7 +973,7 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
                     ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pop();
-                        context.go('/');
+                        context.go('/home');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.purple,
@@ -1149,7 +1149,7 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
                     ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pop();
-                        context.go('/');
+                        context.go('/home');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.purple,
@@ -1263,7 +1263,7 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
       child: Row(
         children: [
           IconButton(
-            onPressed: () => context.go('/'),
+              onPressed: () => context.go('/home'),
             icon: const Icon(
               Icons.arrow_back,
               color: Colors.white,
@@ -1273,7 +1273,7 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
           const SizedBox(width: 8),
           const Expanded(
             child: Text(
-              'Build Your Knight Coach',
+              'Build Your AI Coach',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

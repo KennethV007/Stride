@@ -59,7 +59,7 @@ class ResultsPage extends StatelessWidget {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => context.go('/'),
+            onTap: () => context.go('/home'),
             child: const Row(
               children: [
                 Icon(

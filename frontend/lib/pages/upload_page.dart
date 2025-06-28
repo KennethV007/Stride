@@ -67,7 +67,7 @@ class _UploadPageState extends State<UploadPage> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => context.go('/'),
+            onTap: () => context.go('/home'),
             child: const Row(
               children: [
                 Icon(
