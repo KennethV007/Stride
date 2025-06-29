@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../services/gemini_service.dart';
+import '../services/coach_storage_service.dart';
 import 'dart:typed_data';
+import '../widgets/gradient_text.dart';
 
 class CoachBuilderPage extends StatefulWidget {
   const CoachBuilderPage({super.key});
@@ -182,6 +184,53 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
     return true;
   }
 
+  Future<void> _saveCoachLocally(Uint8List? imageBytes) async {
+    Map<String, String> attributes = {};
+    
+    if (_selectedCoachType == 'Knight') {
+      attributes = {
+        'region': _selectedRegion!,
+        'personality': _selectedPersonality!,
+        'weapon': _selectedWeapon!,
+        'armor': _selectedArmor!,
+        'fightingStyle': _selectedFightingStyle!,
+      };
+    } else if (_selectedCoachType == 'Ninja') {
+      attributes = {
+        'village': _ninjaSelections['village']!,
+        'weapon': _ninjaSelections['weapon']!,
+        'skill': _ninjaSelections['skill']!,
+        'element': _ninjaSelections['element']!,
+        'personality': _ninjaSelections['personality']!,
+      };
+    } else if (_selectedCoachType == 'Robot') {
+      attributes = {
+        'lab': _robotSelections['lab']!,
+        'function': _robotSelections['function']!,
+        'emotions': _robotSelections['emotions']!,
+        'power': _robotSelections['power']!,
+        'personality': _robotSelections['personality']!,
+      };
+    } else if (_selectedCoachType == 'Mandalorian') {
+      attributes = {
+        'region': _mandalorianSelections['region']!,
+        'weapon': _mandalorianSelections['weapon']!,
+        'armor': _mandalorianSelections['armor']!,
+        'motivation': _mandalorianSelections['motivation']!,
+        'warrior_type': _mandalorianSelections['warrior_type']!,
+      };
+    }
+
+    final coachData = CoachData(
+      type: _selectedCoachType!,
+      attributes: attributes,
+      imageBytes: imageBytes?.toList(),
+      createdAt: DateTime.now(),
+    );
+
+    await CoachStorageService.saveCoach(coachData);
+  }
+
   void _showSelectionRequiredDialog() {
     showDialog(
       context: context,
@@ -337,6 +386,9 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
         _isGeneratingCoach = false;
       });
 
+      // Save coach locally
+      await _saveCoachLocally(imageBytes);
+
       // Close loading dialog
       if (mounted) Navigator.of(context).pop();
 
@@ -372,15 +424,26 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              _getCoachTypeIcon(_selectedCoachType!),
-              style: const TextStyle(fontSize: 48),
+            ShaderMask(
+              shaderCallback: (Rect bounds) {
+                return LinearGradient(
+                  colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ).createShader(bounds);
+              },
+              blendMode: BlendMode.srcIn,
+              child: Icon(
+                Icons.person,
+                color: Colors.white,
+                size: 48,
+              ),
             ),
             const SizedBox(height: 16),
-            Text(
+            GradientText(
               '$_selectedCoachType Coach Coming Soon!',
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
               style: const TextStyle(
-                color: Colors.white,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -622,7 +685,7 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
-                      context.go('/home');
+                      context.go('/');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple,
@@ -1371,18 +1434,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.person,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.person,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'Select Your Coach Type',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -1429,18 +1502,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.public,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.public,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'Where is your knight from?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -1487,18 +1570,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.psychology,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.psychology,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What is your knight\'s personality?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -1545,18 +1638,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.sports_martial_arts,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.sports_martial_arts,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What weapon does your knight wield?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -1603,18 +1706,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.shield,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.shield,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What is your knight\'s armor theme?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -1642,18 +1755,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
   Widget _buildPlaceholderSlide(String title, String description) {
     return Column(
       children: [
-        const Icon(
-          Icons.construction,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.construction,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        Text(
+        GradientText(
           title,
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -1699,18 +1822,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
       // For knights, this slide is not needed, so show a transition message
       return Column(
         children: [
-          const Icon(
-            Icons.check_circle,
-            color: Color(0xFF8B5CF6),
-            size: 48,
+          ShaderMask(
+            shaderCallback: (Rect bounds) {
+              return LinearGradient(
+                colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ).createShader(bounds);
+            },
+            blendMode: BlendMode.srcIn,
+            child: Icon(
+              Icons.check_circle,
+              color: Colors.white,
+              size: 48,
+            ),
           ),
           const SizedBox(height: 24),
-          const Text(
+          GradientText(
             'Knight Customization Complete!',
-            style: TextStyle(
+            colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
             ),
             textAlign: TextAlign.center,
           ),
@@ -1746,18 +1879,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
     } else {
       return Column(
         children: [
-          const Icon(
-            Icons.construction,
-            color: Color(0xFF8B5CF6),
-            size: 48,
+          ShaderMask(
+            shaderCallback: (Rect bounds) {
+              return LinearGradient(
+                colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ).createShader(bounds);
+            },
+            blendMode: BlendMode.srcIn,
+            child: Icon(
+              Icons.construction,
+              color: Colors.white,
+              size: 48,
+            ),
           ),
           const SizedBox(height: 24),
-          Text(
+          GradientText(
             'Final $_selectedCoachType Customization',
+            colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
             style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
             ),
             textAlign: TextAlign.center,
           ),
@@ -1804,18 +1947,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.psychology,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.psychology,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What kind of personality does your ninja have?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -1843,18 +1996,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
   Widget _buildSummarySlide() {
     return Column(
       children: [
-        const Icon(
-          Icons.auto_awesome,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.auto_awesome,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        Text(
+        GradientText(
           'Your ${_selectedCoachType ?? 'Coach'}',
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -2255,18 +2418,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.location_city,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.location_city,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What is your ninja\'s origin village?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -2302,18 +2475,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.sports_martial_arts,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.sports_martial_arts,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What is your ninja\'s preferred weapon?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -2349,18 +2532,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.psychology,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.psychology,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What is your ninja\'s skill specialty?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -2396,18 +2589,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.auto_awesome,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.auto_awesome,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What element guides your ninja\'s path?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -2529,18 +2732,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.science,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.science,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'Which lab created your robot?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -2576,18 +2789,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.settings,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.settings,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What is your robot\'s main function?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -2623,18 +2846,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.psychology,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.psychology,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'How does your robot process emotions?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -2670,18 +2903,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.battery_charging_full,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.battery_charging_full,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What powers your robot?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -2717,18 +2960,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.face,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.face,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What personality module is installed?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -2764,18 +3017,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.shield,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.shield,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What material is your armor made of?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -2811,18 +3074,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.favorite,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.favorite,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What motivates your warrior path?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -2859,18 +3132,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.terrain,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.terrain,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'Which region do you hail from?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -2906,18 +3189,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.gps_fixed,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.gps_fixed,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What is your primary weapon?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -2953,18 +3246,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.person_4,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.person_4,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What kind of warrior are you?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -3011,18 +3314,28 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
 
     return Column(
       children: [
-        const Icon(
-          Icons.sports_martial_arts,
-          color: Color(0xFF8B5CF6),
-          size: 48,
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcIn,
+          child: Icon(
+            Icons.sports_martial_arts,
+            color: Colors.white,
+            size: 48,
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        GradientText(
           'What is your knight\'s fighting style?',
-          style: TextStyle(
+          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),

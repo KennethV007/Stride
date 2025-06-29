@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../widgets/gradient_text.dart';
 import 'package:video_player/video_player.dart';
 
 
@@ -51,72 +52,51 @@ class _ResultsPageState extends State<ResultsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0F172A),
-              Color(0xFF1E293B),
-              Color(0xFF0F172A),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              _buildHeader(context),
-              
-              // Main Content
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 32),
-                        _buildTitle(),
-                        const SizedBox(height: 32),
-                        _buildVideoSection(),
-                        const SizedBox(height: 24),
-                        _buildAIFeedbackSection(),
-                        const SizedBox(height: 32),
-                        _buildActionButtons(context),
-                        const SizedBox(height: 32),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Row(
+      body: Stack(
         children: [
-          GestureDetector(
-            onTap: () => context.go('/home'),
-            child: const Row(
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF181A20),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xFF181A20),
+                  const Color(0xFF4F8CFF).withOpacity(0.25),
+                  const Color(0xFF7F5FFF).withOpacity(0.25),
+                  const Color(0xFFFF5CA8).withOpacity(0.18),
+                  const Color(0xFF181A20),
+                ],
+                stops: const [0.0, 0.3, 0.6, 0.85, 1.0],
+              ),
+            ),
+          ),
+          Container(
+            color: Colors.black.withOpacity(0.18),
+          ),
+          SafeArea(
+            child: Column(
               children: [
-                Icon(
-                  Icons.arrow_back,
-                  color: Color(0xFF06B6D4),
-                  size: 20,
-                ),
-                SizedBox(width: 8),
-                Text(
-                  'Back to Home',
-                  style: TextStyle(
-                    color: Color(0xFF06B6D4),
-                    fontSize: 16,
+                // Header
+                _buildHeader(context),
+                
+                // Main Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 32),
+                          _buildVideoSection(),
+                          const SizedBox(height: 24),
+                          _buildAIFeedbackSection(),
+                          const SizedBox(height: 32),
+                          _buildActionButtons(context),
+                          const SizedBox(height: 32),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -127,34 +107,74 @@ class _ResultsPageState extends State<ResultsPage> {
     );
   }
 
-  Widget _buildTitle() {
-    return Column(
-      children: [
-        RichText(
-          textAlign: TextAlign.center,
-          text: const TextSpan(
-            children: [
-              TextSpan(
-                text: 'Your Form Analysis',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+  Widget _buildHeader(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GestureDetector(
+            onTap: () => context.go('/'),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  width: 2,
+                  style: BorderStyle.solid,
+                  color: Colors.transparent,
+                ),
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
-            ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ShaderMask(
+                      shaderCallback: (Rect bounds) {
+                        return const LinearGradient(
+                          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ).createShader(bounds);
+                      },
+                      blendMode: BlendMode.srcIn,
+                      child: Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Back to Home',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          'AI has analyzed your running form - here\'s what we found',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white70,
+          const SizedBox(height: 16),
+          Center(
+            child: GradientText(
+              'Your Form Analysis',
+              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+              style: const TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -270,7 +290,9 @@ class _ResultsPageState extends State<ResultsPage> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF06B6D4), Color(0xFF8B5CF6)],
+                        colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
                     ),
                     child: Container(
@@ -369,19 +391,19 @@ class _ResultsPageState extends State<ResultsPage> {
             child: Ink(
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF06B6D4), Color(0xFF8B5CF6)],
+                  colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
                 ),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 alignment: Alignment.center,
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.upload_file, color: Colors.white),
-                    SizedBox(width: 8),
-                    Text(
+                    const SizedBox(width: 8),
+                    const Text(
                       'Upload Another Run',
                       style: TextStyle(
                         fontSize: 16,
@@ -403,23 +425,34 @@ class _ResultsPageState extends State<ResultsPage> {
           child: OutlinedButton(
             onPressed: () {},
             style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Color(0xFF8B5CF6)),
-              foregroundColor: const Color(0xFF8B5CF6),
+              side: const BorderSide(color: Color(0xFF7F5FFF)),
+              foregroundColor: const Color(0xFF7F5FFF),
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.trending_up),
-                SizedBox(width: 8),
-                Text(
+                ShaderMask(
+                  shaderCallback: (Rect bounds) {
+                    return const LinearGradient(
+                      colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ).createShader(bounds);
+                  },
+                  blendMode: BlendMode.srcIn,
+                  child: Icon(Icons.trending_up, color: Colors.white),
+                ),
+                const SizedBox(width: 8),
+                const Text(
                   'View Progress',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
+                    color: Color(0xFF7F5FFF),
                   ),
                 ),
               ],

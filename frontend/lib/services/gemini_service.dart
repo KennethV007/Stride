@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 class GeminiService {
-  static const String _apiKey = 'AIzaSyDGHhVbNfjMc12koidU_t-XBFM5i5mXtUU';
+  static const String _apiKey = 'AIzaSyBpBnpa2N4lD3EG8qWeWLfmMgwiYy7PK4Y';
   static const String _baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp-image-generation:generateContent';
 
   static Future<Uint8List?> generateKnightCoachImage({
@@ -579,7 +579,7 @@ WARRIOR TYPE: $warriorType - ${warriorTypeTraits[warriorType]}
 
 The Mandalorian should be:
 - A skilled, inspiring warrior coach that would motivate runners and athletes
-- Always wearing the iconic Mandalorian helmet with T-shaped visor
+- Always wearing a similiar Mandalorian helmet with T-shaped visor
 - Shown as a portrait from the chest/shoulders up (head and upper torso only)
 - Standing in a confident, coaching pose with upper body visible
 - Set against a background that reflects their $region origin
