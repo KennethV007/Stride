@@ -1,9 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/gradient_text.dart';
+import 'package:video_player/video_player.dart';
 
-class ResultsPage extends StatelessWidget {
+
+
+
+
+
+
+class ResultsPage extends StatefulWidget {
   const ResultsPage({super.key});
+
+  @override
+  State<ResultsPage> createState() => _ResultsPageState();
+}
+
+class _ResultsPageState extends State<ResultsPage> {
+  VideoPlayerController? _controller;
+  String? _videoUrl;
+  Future<void>? _initializeVideoPlayerFuture;
+  bool _isInitialized = false;
+  String? _videoError;
+  List<String> _tips = [];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final extra = GoRouterState.of(context).extra;
+    if (extra is Map<String, dynamic> && extra['processed_video_url'] != null) {
+      _videoUrl = extra['processed_video_url'];
+      if (extra['analysis'] is Map && extra['analysis']['tips'] is List) {
+        _tips = List<String>.from(extra['analysis']['tips']);
+      }
+      _controller = VideoPlayerController.networkUrl(Uri.parse(_videoUrl!))
+        ..initialize().then((_) {
+          setState(() {});
+          _controller!.setVolume(0.0);
+          _controller!.play();
+        });
+      _controller!.setLooping(true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +201,7 @@ class ResultsPage extends StatelessWidget {
           ),
           child: Column(
             children: [
-              // Video Player Mock
+              // Video Player
               Container(
                 width: double.infinity,
                 height: 200,
@@ -172,6 +216,7 @@ class ResultsPage extends StatelessWidget {
                     ],
                   ),
                 ),
+<<<<<<< HEAD
                 child: Stack(
                   children: [
                     // Gradient overlay
@@ -242,10 +287,16 @@ class ResultsPage extends StatelessWidget {
                     ),
                   ],
                 ),
+=======
+                child: _controller != null && _controller!.value.isInitialized
+                    ? AspectRatio(
+                        aspectRatio: _controller!.value.aspectRatio,
+                        child: VideoPlayer(_controller!),
+                      )
+                    : Container(),
+>>>>>>> 2d14dde8878430ab47627e4d21c9445228732826
               ),
-              
               const SizedBox(height: 16),
-              
               // Video controls
               Row(
                 children: [
@@ -358,8 +409,8 @@ class ResultsPage extends StatelessWidget {
                   ),
                 ],
               ),
-              
               const SizedBox(height: 24),
+<<<<<<< HEAD
               
               // Primary Feedback
               Container(
@@ -435,6 +486,37 @@ class ResultsPage extends StatelessWidget {
                   height: 1.5,
                 ),
               ),
+=======
+              // Dynamic Feedback Tips
+              if (_tips.isNotEmpty)
+                ..._tips.map((tip) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('• ', style: TextStyle(color: Color(0xFF06B6D4), fontSize: 16)),
+                      Expanded(
+                        child: Text(
+                          tip,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                            height: 1.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+              if (_tips.isEmpty)
+                const Text(
+                  'No feedback available.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
+                  ),
+                ),
+>>>>>>> 2d14dde8878430ab47627e4d21c9445228732826
             ],
           ),
         ),

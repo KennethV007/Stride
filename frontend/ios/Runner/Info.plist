@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>This app uses the camera to record videos for fitness tracking</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app uses the microphone to record audio with videos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app accesses the photo library to select videos</string>
 </dict>
 </plist>
