@@ -597,4 +597,126 @@ The Mandalorian should be:
 Style: High-quality Star Wars Mandalorian portrait art, detailed character design, inspiring and disciplined atmosphere, chest-up composition, authentic Mandalorian warrior with traditional helmet and armor.
 ''';
   }
+
+  static Future<List<String>?> generateRunningFormFeedback({
+    required Map<String, dynamic> analysisData,
+  }) async {
+    try {
+      // Create a detailed prompt for running form analysis
+      final prompt = _buildRunningFormPrompt(analysisData);
+      
+      final response = await http.post(
+        Uri.parse('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$_apiKey'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'contents': [
+            {
+              'parts': [
+                {
+                  'text': prompt,
+                }
+              ]
+            }
+          ],
+          'generationConfig': {
+            'temperature': 0.7,
+            'topK': 40,
+            'topP': 0.95,
+            'maxOutputTokens': 1024,
+          }
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final generatedText = data['candidates'][0]['content']['parts'][0]['text'] as String;
+        
+        // Parse the response to extract feedback points
+        final feedbackPoints = _parseRunningFeedback(generatedText);
+        return feedbackPoints;
+      } else {
+        print('Error generating running feedback: ${response.statusCode} - ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Error generating running feedback: $e');
+      return null;
+    }
+  }
+
+  static String _buildRunningFormPrompt(Map<String, dynamic> analysisData) {
+    final leftKneeData = analysisData['left_knee_angle'] ?? {};
+    final rightKneeData = analysisData['right_knee_angle'] ?? {};
+    final leftHipData = analysisData['left_hip_angle'] ?? {};
+    final rightHipData = analysisData['right_hip_angle'] ?? {};
+    final torsoLeanData = analysisData['torso_lean_angle'] ?? {};
+
+    // Build data string only for available measurements
+    final dataPoints = <String>[];
+    if (leftKneeData['mean'] != null) dataPoints.add('- Left Knee: ${leftKneeData['mean']!.toStringAsFixed(0)}°');
+    if (rightKneeData['mean'] != null) dataPoints.add('- Right Knee: ${rightKneeData['mean']!.toStringAsFixed(0)}°');
+    if (leftHipData['mean'] != null) dataPoints.add('- Left Hip: ${leftHipData['mean']!.toStringAsFixed(0)}°');
+    if (rightHipData['mean'] != null) dataPoints.add('- Right Hip: ${rightHipData['mean']!.toStringAsFixed(0)}°');
+    if (torsoLeanData['mean'] != null) dataPoints.add('- Torso: ${torsoLeanData['mean']!.toStringAsFixed(0)}°');
+
+    if (dataPoints.isEmpty) {
+      return '''
+Unable to analyze running form - no measurement data available.
+
+Return these bullet points:
+- Video analysis in progress - please wait
+- MediaPipe processing may take a moment
+- Try uploading video again if this persists
+''';
+    }
+
+    return '''
+Running Coach Analysis:
+
+Your measurements: L Knee ${leftKneeData['mean']?.round() ?? 'N/A'}°, R Knee ${rightKneeData['mean']?.round() ?? 'N/A'}°, L Hip ${leftHipData['mean']?.round() ?? 'N/A'}°, R Hip ${rightHipData['mean']?.round() ?? 'N/A'}°, Torso ${torsoLeanData['mean']?.round() ?? 'N/A'}°
+
+OPTIMAL RANGES: Knee 140-160°, Hip 160-180°, Torso 2-8° forward
+
+Give 4-5 bullet points starting with "-". Include specific angles and brief explanations. Max 12 words per bullet. Total under 150 words.
+
+Examples:
+- "Your right knee at 110° shows excellent drive - maintain this form"
+- "Torso lean at 76° is excessive - aim for 5-8° forward"
+- "Left knee 139° vs right 110° shows 29° asymmetry - work on balance"
+- "Hip extension at 165° is good - keep driving knees forward"
+''';
+  }
+
+  static List<String> _parseRunningFeedback(String generatedText) {
+    // Split the text into lines and extract bullet points
+    final lines = generatedText.split('\n');
+    final feedbackPoints = <String>[];
+    
+    for (final line in lines) {
+      final trimmedLine = line.trim();
+      if (trimmedLine.startsWith('-') || trimmedLine.startsWith('•')) {
+        // Remove the bullet point marker and clean up the text
+        final cleanFeedback = trimmedLine.substring(1).trim();
+        if (cleanFeedback.isNotEmpty) {
+          feedbackPoints.add(cleanFeedback);
+        }
+      }
+    }
+    
+    // If no bullet points found, try to split by periods and take meaningful sentences
+    if (feedbackPoints.isEmpty) {
+      final sentences = generatedText.split('.');
+      for (final sentence in sentences) {
+        final trimmedSentence = sentence.trim();
+        if (trimmedSentence.isNotEmpty && trimmedSentence.length > 20) {
+          feedbackPoints.add(trimmedSentence);
+          if (feedbackPoints.length >= 6) break; // Limit to 6 points
+        }
+      }
+    }
+    
+    return feedbackPoints;
+  }
 } 

@@ -167,5 +167,10 @@ else:
     tips.append("Good hip extension during your stride!")
 
 print(json.dumps({
-    "tips": tips
+    "tips": tips,
+    "left_knee_angle": analysis['left_knee_angle'],
+    "right_knee_angle": analysis['right_knee_angle'],
+    "left_hip_angle": analysis['left_hip_angle'],
+    "right_hip_angle": analysis['right_hip_angle'],
+    "torso_lean_angle": analysis['torso_lean_angle']
 }))

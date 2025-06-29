@@ -15,7 +15,6 @@ class UploadPage extends StatefulWidget {
 }
 
 class _UploadPageState extends State<UploadPage> {
-  bool _includeGpsStats = false;
   bool _isUploading = false;
   double _uploadProgress = 0.0;
   String _currentStep = '';
@@ -66,8 +65,6 @@ class _UploadPageState extends State<UploadPage> {
                           _buildUploadZone(),
                           const SizedBox(height: 32),
                           _buildMotivationalCopy(),
-                          const SizedBox(height: 24),
-                          _buildGpsToggle(),
                           const SizedBox(height: 32),
                         ],
                       ),
@@ -89,22 +86,13 @@ class _UploadPageState extends State<UploadPage> {
         children: [
           GestureDetector(
             onTap: () => context.go('/'),
-            child: const Row(
-              children: [
-                Icon(
-                  Icons.arrow_back,
-                  color: Color(0xFF06B6D4),
-                  size: 20,
-                ),
-                SizedBox(width: 8),
-                Text(
-                  'Back to Home',
-                  style: TextStyle(
-                    color: Color(0xFF06B6D4),
-                    fontSize: 16,
-                  ),
-                ),
-              ],
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              child: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+                size: 24,
+              ),
             ),
           ),
         ],
@@ -345,60 +333,7 @@ class _UploadPageState extends State<UploadPage> {
     );
   }
 
-  Widget _buildGpsToggle() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Include recent GPS stats',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.white.withValues(alpha: 0.8),
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _includeGpsStats = !_includeGpsStats;
-              });
-            },
-            child: Container(
-              width: 48,
-              height: 24,
-              decoration: BoxDecoration(
-                color: _includeGpsStats
-                    ? const Color(0xFF7F5FFF)
-                    : Colors.white.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: AnimatedAlign(
-                duration: const Duration(milliseconds: 200),
-                alignment: _includeGpsStats
-                    ? Alignment.centerRight
-                    : Alignment.centerLeft,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  margin: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   void _handleFileUpload() async {
     if (_isUploading) return;
@@ -475,7 +410,7 @@ class _UploadPageState extends State<UploadPage> {
     try {
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://172.20.10.10:8000/video/upload'),
+        Uri.parse('http://localhost:8000/video/upload'),
       );
       
       // Add the file with explicit content type

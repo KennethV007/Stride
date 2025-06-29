@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/gradient_text.dart';
 import 'package:video_player/video_player.dart';
+import '../services/gemini_service.dart';
+import '../services/coach_storage_service.dart';
+import 'dart:typed_data';
 
 
 
@@ -23,6 +26,10 @@ class _ResultsPageState extends State<ResultsPage> {
   bool _isInitialized = false;
   String? _videoError;
   List<String> _tips = [];
+  List<String> _geminiFeedback = [];
+  Map<String, dynamic>? _analysisData;
+  bool _isGeneratingFeedback = false;
+  CoachData? _savedCoach;
 
   @override
   void didChangeDependencies() {
@@ -30,9 +37,14 @@ class _ResultsPageState extends State<ResultsPage> {
     final extra = GoRouterState.of(context).extra;
     if (extra is Map<String, dynamic> && extra['processed_video_url'] != null) {
       _videoUrl = extra['processed_video_url'];
-      if (extra['analysis'] is Map && extra['analysis']['tips'] is List) {
-        _tips = List<String>.from(extra['analysis']['tips']);
+      _analysisData = extra['analysis'] as Map<String, dynamic>?;
+      
+      // Get basic tips from analysis
+      if (_analysisData != null && _analysisData!['tips'] is List) {
+        _tips = List<String>.from(_analysisData!['tips']);
       }
+      
+      // Initialize video controller
       _controller = VideoPlayerController.networkUrl(Uri.parse(_videoUrl!))
         ..initialize().then((_) {
           setState(() {});
@@ -40,6 +52,94 @@ class _ResultsPageState extends State<ResultsPage> {
           _controller!.play();
         });
       _controller!.setLooping(true);
+      
+      // Load saved coach data and generate Gemini feedback
+      _loadSavedCoach();
+      _generateGeminiFeedback();
+    }
+  }
+
+  Future<void> _loadSavedCoach() async {
+    final coach = await CoachStorageService.loadCoach();
+    if (mounted) {
+      setState(() {
+        _savedCoach = coach;
+      });
+    }
+  }
+
+  Future<void> _generateGeminiFeedback() async {
+    if (_analysisData == null) return;
+    
+    setState(() {
+      _isGeneratingFeedback = true;
+    });
+    
+    try {
+      final feedback = await GeminiService.generateRunningFormFeedback(
+        analysisData: _analysisData!,
+      );
+      
+      if (feedback != null && mounted) {
+        setState(() {
+          _geminiFeedback = feedback;
+          _isGeneratingFeedback = false;
+        });
+      }
+    } catch (e) {
+      print('Error generating Gemini feedback: $e');
+      if (mounted) {
+        setState(() {
+          _isGeneratingFeedback = false;
+        });
+      }
+    }
+  }
+
+  String _getCoachName() {
+    if (_savedCoach == null) return 'Coach Stride';
+    
+    final type = _savedCoach!.type;
+    final attributes = _savedCoach!.attributes;
+    
+    switch (type) {
+      case 'Knight':
+        final personality = attributes['personality'] ?? 'Noble';
+        final region = attributes['region'] ?? 'Realm';
+        return 'Sir $personality of $region';
+      case 'Ninja':
+        final element = attributes['element'] ?? 'Shadow';
+        final village = attributes['village'] ?? 'Village';
+        return '$element ${village.split(' ').first} Ninja';
+      case 'Robot':
+        final function = attributes['function'] ?? 'Assistant';
+        final lab = attributes['lab'] ?? 'Tech';
+        return '${lab.split(' ').first}-${function.split(' ').first}';
+      case 'Mandalorian':
+        final region = attributes['region'] ?? 'Sector';
+        final warriorType = attributes['warrior_type'] ?? 'Hunter';
+        return '$region $warriorType';
+      default:
+        return 'Coach Stride';
+    }
+  }
+
+  String _getCoachSubtitle() {
+    if (_savedCoach == null) return 'AI Form Analyst';
+    
+    final type = _savedCoach!.type;
+    
+    switch (type) {
+      case 'Knight':
+        return 'Running Form Knight';
+      case 'Ninja':
+        return 'Speed & Form Ninja';
+      case 'Robot':
+        return 'Biomechanics Analyst';
+      case 'Mandalorian':
+        return 'Form Discipline Master';
+      default:
+        return 'AI Form Analyst';
     }
   }
 
@@ -115,50 +215,12 @@ class _ResultsPageState extends State<ResultsPage> {
         children: [
           GestureDetector(
             onTap: () => context.go('/'),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  width: 2,
-                  style: BorderStyle.solid,
-                  color: Colors.transparent,
-                ),
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ShaderMask(
-                      shaderCallback: (Rect bounds) {
-                        return const LinearGradient(
-                          colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ).createShader(bounds);
-                      },
-                      blendMode: BlendMode.srcIn,
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Back to Home',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                ),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              child: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+                size: 24,
               ),
             ),
           ),
@@ -223,33 +285,7 @@ class _ResultsPageState extends State<ResultsPage> {
                       )
                     : Container(),
               ),
-              const SizedBox(height: 16),
-              // Video controls
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.white30),
-                        foregroundColor: Colors.white,
-                      ),
-                      child: const Text('Your Form'),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.white30),
-                        foregroundColor: Colors.white,
-                      ),
-                      child: const Text('Optimal Form'),
-                    ),
-                  ),
-                ],
-              ),
+
             ],
           ),
         ),
@@ -296,38 +332,50 @@ class _ResultsPageState extends State<ResultsPage> {
                       ),
                     ),
                     child: Container(
-                      margin: const EdgeInsets.all(1),
+                      margin: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1E293B),
-                        borderRadius: BorderRadius.circular(19),
+                        borderRadius: BorderRadius.circular(18),
                       ),
-                      child: const Center(
-                        child: Text(
-                          'CS',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(18),
+                        child: _savedCoach?.imageAsBytes != null
+                            ? Image.memory(
+                                _savedCoach!.imageAsBytes!,
+                                width: 36,
+                                height: 36,
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                color: const Color(0xFF1E293B),
+                                child: const Center(
+                                  child: Text(
+                                    'CS',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Coach Stride',
-                        style: TextStyle(
+                        _getCoachName(),
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
                       ),
                       Text(
-                        'AI Form Analyst',
-                        style: TextStyle(
+                        _getCoachSubtitle(),
+                        style: const TextStyle(
                           fontSize: 12,
                           color: Colors.white60,
                         ),
@@ -337,8 +385,55 @@ class _ResultsPageState extends State<ResultsPage> {
                 ],
               ),
               const SizedBox(height: 24),
-              // Dynamic Feedback Tips
-              if (_tips.isNotEmpty)
+              
+              // AI-Generated Feedback (Gemini)
+              if (_isGeneratingFeedback)
+                const Row(
+                  children: [
+                    SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF06B6D4)),
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Text(
+                      'Generating personalized feedback...',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white70,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                ),
+              
+              // Show Gemini feedback if available
+              if (_geminiFeedback.isNotEmpty && !_isGeneratingFeedback)
+                ..._geminiFeedback.map((feedback) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('• ', style: TextStyle(color: Color(0xFF06B6D4), fontSize: 16)),
+                      Expanded(
+                        child: Text(
+                          feedback,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                            height: 1.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+                
+              // Show basic tips if no Gemini feedback yet
+              if (_geminiFeedback.isEmpty && !_isGeneratingFeedback && _tips.isNotEmpty)
                 ..._tips.map((tip) => Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: Row(
@@ -358,7 +453,9 @@ class _ResultsPageState extends State<ResultsPage> {
                     ],
                   ),
                 )),
-              if (_tips.isEmpty)
+                
+              // Show fallback message if no feedback available
+              if (_geminiFeedback.isEmpty && _tips.isEmpty && !_isGeneratingFeedback)
                 const Text(
                   'No feedback available.',
                   style: TextStyle(
@@ -414,48 +511,6 @@ class _ResultsPageState extends State<ResultsPage> {
                   ],
                 ),
               ),
-            ),
-          ),
-        ),
-        
-        const SizedBox(height: 12),
-        
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton(
-            onPressed: () {},
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Color(0xFF7F5FFF)),
-              foregroundColor: const Color(0xFF7F5FFF),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ShaderMask(
-                  shaderCallback: (Rect bounds) {
-                    return const LinearGradient(
-                      colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ).createShader(bounds);
-                  },
-                  blendMode: BlendMode.srcIn,
-                  child: Icon(Icons.trending_up, color: Colors.white),
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  'View Progress',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF7F5FFF),
-                  ),
-                ),
-              ],
             ),
           ),
         ),
