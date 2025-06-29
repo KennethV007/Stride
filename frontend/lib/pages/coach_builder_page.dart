@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../services/gemini_service.dart';
+import '../services/coach_storage_service.dart';
 import 'dart:typed_data';
 import '../widgets/gradient_text.dart';
 
@@ -183,6 +184,53 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
     return true;
   }
 
+  Future<void> _saveCoachLocally(Uint8List? imageBytes) async {
+    Map<String, String> attributes = {};
+    
+    if (_selectedCoachType == 'Knight') {
+      attributes = {
+        'region': _selectedRegion!,
+        'personality': _selectedPersonality!,
+        'weapon': _selectedWeapon!,
+        'armor': _selectedArmor!,
+        'fightingStyle': _selectedFightingStyle!,
+      };
+    } else if (_selectedCoachType == 'Ninja') {
+      attributes = {
+        'village': _ninjaSelections['village']!,
+        'weapon': _ninjaSelections['weapon']!,
+        'skill': _ninjaSelections['skill']!,
+        'element': _ninjaSelections['element']!,
+        'personality': _ninjaSelections['personality']!,
+      };
+    } else if (_selectedCoachType == 'Robot') {
+      attributes = {
+        'lab': _robotSelections['lab']!,
+        'function': _robotSelections['function']!,
+        'emotions': _robotSelections['emotions']!,
+        'power': _robotSelections['power']!,
+        'personality': _robotSelections['personality']!,
+      };
+    } else if (_selectedCoachType == 'Mandalorian') {
+      attributes = {
+        'region': _mandalorianSelections['region']!,
+        'weapon': _mandalorianSelections['weapon']!,
+        'armor': _mandalorianSelections['armor']!,
+        'motivation': _mandalorianSelections['motivation']!,
+        'warrior_type': _mandalorianSelections['warrior_type']!,
+      };
+    }
+
+    final coachData = CoachData(
+      type: _selectedCoachType!,
+      attributes: attributes,
+      imageBytes: imageBytes?.toList(),
+      createdAt: DateTime.now(),
+    );
+
+    await CoachStorageService.saveCoach(coachData);
+  }
+
   void _showSelectionRequiredDialog() {
     showDialog(
       context: context,
@@ -337,6 +385,9 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
         _generatedKnightImage = imageBytes;
         _isGeneratingCoach = false;
       });
+
+      // Save coach locally
+      await _saveCoachLocally(imageBytes);
 
       // Close loading dialog
       if (mounted) Navigator.of(context).pop();
@@ -634,7 +685,7 @@ class _CoachBuilderPageState extends State<CoachBuilderPage> {
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
-                      context.go('/home');
+                      context.go('/');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple,
