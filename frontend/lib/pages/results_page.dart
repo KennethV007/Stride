@@ -1,8 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:video_player/video_player.dart';
 
-class ResultsPage extends StatelessWidget {
+
+
+
+
+
+
+class ResultsPage extends StatefulWidget {
   const ResultsPage({super.key});
+
+  @override
+  State<ResultsPage> createState() => _ResultsPageState();
+}
+
+class _ResultsPageState extends State<ResultsPage> {
+  VideoPlayerController? _controller;
+  String? _videoUrl;
+  Future<void>? _initializeVideoPlayerFuture;
+  bool _isInitialized = false;
+  String? _videoError;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final extra = GoRouterState.of(context).extra;
+    if (extra is Map<String, dynamic> && extra['processed_video_url'] != null) {
+      _videoUrl = extra['processed_video_url'];
+      _controller = VideoPlayerController.networkUrl(Uri.parse(_videoUrl!))
+        ..initialize().then((_) {
+          setState(() {});
+          _controller!.setVolume(0.0);
+          _controller!.play();
+        });
+      _controller!.setLooping(true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +177,7 @@ class ResultsPage extends StatelessWidget {
           ),
           child: Column(
             children: [
-              // Video Player Mock
+              // Video Player
               Container(
                 width: double.infinity,
                 height: 200,
@@ -152,66 +192,27 @@ class ResultsPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                child: Stack(
-                  children: [
-                    // Gradient overlay
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        gradient: LinearGradient(
-                          colors: [
-                            const Color(0xFF06B6D4).withOpacity(0.1),
-                            const Color(0xFF8B5CF6).withOpacity(0.1),
-                          ],
-                        ),
-                      ),
-                    ),
-                    
-                    // Play button
-                    Center(
-                      child: Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(32),
-                        ),
-                        child: const Icon(
-                          Icons.play_arrow,
-                          color: Colors.white,
-                          size: 32,
-                        ),
-                      ),
-                    ),
-                    
-                    // Pose tracking indicator
-                    Positioned(
-                      top: 16,
-                      right: 16,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF06B6D4).withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: const Text(
-                          'Pose Tracking: Active',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF06B6D4),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                child: _controller != null && _controller!.value.isInitialized
+                    ? AspectRatio(
+                        aspectRatio: _controller!.value.aspectRatio,
+                        child: VideoPlayer(_controller!),
+                      )
+                    : Container(),
               ),
-              
               const SizedBox(height: 16),
-              
+              // Debug: Show processed_video_url
+              if (_videoUrl != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    'Video URL: $_videoUrl',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.white70,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
               // Video controls
               Row(
                 children: [

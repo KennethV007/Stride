@@ -46,7 +46,7 @@
 		</data>
 		<key>Frameworks/App.framework/App</key>
 		<data>
-		mwax0dcDLwHbSLijn/CLaZ4pZuE=
+		UfGbjdKl4fg3OVc1koHyqEciZ7Y=
 		</data>
 		<key>Frameworks/App.framework/Info.plist</key>
 		<data>
@@ -54,7 +54,7 @@
 		</data>
 		<key>Frameworks/App.framework/_CodeSignature/CodeResources</key>
 		<data>
-		FDWbpzwaVD/6ibvdxMeEk/hUam4=
+		vXtHGG5uoyJTre3GGldqIOFrkjY=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.bin</key>
 		<data>
@@ -70,7 +70,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/NOTICES.Z</key>
 		<data>
-		crA7GdPCFhBN3exxCEYur+6kWno=
+		90Mpj5jFoWUxtrJHN2/qus8CthA=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/NativeAssetsManifest.json</key>
 		<data>
@@ -86,7 +86,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/kernel_blob.bin</key>
 		<data>
-		HRXhgSVFwnoU7WKAhNdNTfevkto=
+		jCK2gMmAnhN8q+73SMfEoqg7jKU=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -212,9 +212,29 @@
 		<data>
 		/LX0ZlwxwIAIhjZaDB8EiH5KpXA=
 		</data>
+		<key>Frameworks/video_player_avfoundation.framework/Info.plist</key>
+		<data>
+		17zUsCrnd8ufns4ahf0+yx4JmI4=
+		</data>
+		<key>Frameworks/video_player_avfoundation.framework/_CodeSignature/CodeResources</key>
+		<data>
+		CCnfw4moJMH+wI/QMsOTKbUH2d0=
+		</data>
+		<key>Frameworks/video_player_avfoundation.framework/video_player_avfoundation</key>
+		<data>
+		OUp7yBZoynwa/gIrpE+n/zvVnN4=
+		</data>
+		<key>Frameworks/video_player_avfoundation.framework/video_player_avfoundation_privacy.bundle/Info.plist</key>
+		<data>
+		CZsDa9KDCcGYBbrJEuCYzHFymn0=
+		</data>
+		<key>Frameworks/video_player_avfoundation.framework/video_player_avfoundation_privacy.bundle/PrivacyInfo.xcprivacy</key>
+		<data>
+		/LX0ZlwxwIAIhjZaDB8EiH5KpXA=
+		</data>
 		<key>Info.plist</key>
 		<data>
-		2ukHhueCpW7xkAb8ki/ksDP5kdw=
+		1FWun2U/TY0uFJIYzuQEy/Mh2pM=
 		</data>
 		<key>PkgInfo</key>
 		<data>
@@ -222,11 +242,11 @@
 		</data>
 		<key>Runner.debug.dylib</key>
 		<data>
-		I8qy2MucCrMObIviRy+sGvgIlK0=
+		Q8N+TXLrKlih1SMm0Voa088Tsz4=
 		</data>
 		<key>__preview.dylib</key>
 		<data>
-		8ESUObSF5Iz9QRolKDBoxdifMxg=
+		ZBJWj1WLh6tzHu9ebh7aHj0+cHY=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -305,7 +325,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			UT4xFSE1DuMXh1sem829HPob1cEe9VlUR5e3dayW4RA=
+			s1bHzuzLaRdtWHVWejv8bE6jnT7GOcPVVqTPlBENU0U=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/Info.plist</key>
@@ -319,7 +339,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Dg/8HC6lIiTB7n38bqyKbpHpOn3I6I/8t6h/BE1+f10=
+			FCGu30ipOB63RHhB0uMeBP51TwpzE9/ns4is05LAvn8=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.bin</key>
@@ -347,7 +367,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Y6z1NyfZT5z0lhZmYL3O2+mk9G/5d67vRLbCbGvq2uE=
+			JdYBK8e54tuHbiJZyRPnKdZZYUEPfLOSSr8EpPOj5UI=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/NativeAssetsManifest.json</key>
@@ -375,7 +395,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Rzl58h/Bva2P4AY4te9ikTeFH6i39KDvNE7pG6+VM3Y=
+			EH6/PDFQY6Zvt3AgCMFp00phcPBIgMBG7NY53c3GXAM=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
@@ -595,18 +615,53 @@
 			bS2g2NkwIn1CjB2TY7CtbjoS4sm2jFzilxWKdBL8jDE=
 			</data>
 		</dict>
+		<key>Frameworks/video_player_avfoundation.framework/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			SLBvqcdP52/utPai+w29zc7LayP/5rm50QMkDy9nZRk=
+			</data>
+		</dict>
+		<key>Frameworks/video_player_avfoundation.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			5Cn37BZXoVldg6tOdt5RUyr0zq0PMvjEjEK5KWt5IXk=
+			</data>
+		</dict>
+		<key>Frameworks/video_player_avfoundation.framework/video_player_avfoundation</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			LVMM3emVu7lCHtlXMnMiLwR0Afeer8wbrBVXzrwJYyY=
+			</data>
+		</dict>
+		<key>Frameworks/video_player_avfoundation.framework/video_player_avfoundation_privacy.bundle/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			AsheHcqWHrtxL0j+T3eraqRb4Z4VTQ9oH6rppnSZK0I=
+			</data>
+		</dict>
+		<key>Frameworks/video_player_avfoundation.framework/video_player_avfoundation_privacy.bundle/PrivacyInfo.xcprivacy</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bS2g2NkwIn1CjB2TY7CtbjoS4sm2jFzilxWKdBL8jDE=
+			</data>
+		</dict>
 		<key>Runner.debug.dylib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			CETILGfwbROU51dmDSE2ENFGm2biAUS3739l2lbvo3w=
+			JFX5g/UfHeRaEhzKx2ft/7CSw8g3Me6K1NONynqiegE=
 			</data>
 		</dict>
 		<key>__preview.dylib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			8XTQABxcES3mtGQVmVWsgKvVRaljE2tXkoByEMTJzIU=
+			RzI6ZeDYFNS/84uAFc6v7K5ieFod9rY9gFZKFwsfT0Y=
 			</data>
 		</dict>
 	</dict>
