@@ -216,85 +216,12 @@ class _ResultsPageState extends State<ResultsPage> {
                     ],
                   ),
                 ),
-<<<<<<< HEAD
-                child: Stack(
-                  children: [
-                    // Gradient overlay
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        gradient: LinearGradient(
-                          colors: [
-                            const Color(0xFF06B6D4).withOpacity(0.1),
-                            const Color(0xFF8B5CF6).withOpacity(0.1),
-                          ],
-                        ),
-                      ),
-                    ),
-                    
-                    // Play button
-                    Center(
-                      child: Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(32),
-                        ),
-                        child: ShaderMask(
-                          shaderCallback: (Rect bounds) {
-                            return LinearGradient(
-                              colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ).createShader(bounds);
-                          },
-                          blendMode: BlendMode.srcIn,
-                          child: const Icon(
-                            Icons.play_arrow,
-                            color: Colors.white,
-                            size: 32,
-                          ),
-                        ),
-                      ),
-                    ),
-                    
-                    // Pose tracking indicator
-                    Positioned(
-                      top: 16,
-                      right: 16,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: const Text(
-                          'Pose Tracking: Active',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-=======
                 child: _controller != null && _controller!.value.isInitialized
                     ? AspectRatio(
                         aspectRatio: _controller!.value.aspectRatio,
                         child: VideoPlayer(_controller!),
                       )
                     : Container(),
->>>>>>> 2d14dde8878430ab47627e4d21c9445228732826
               ),
               const SizedBox(height: 16),
               // Video controls
@@ -410,83 +337,6 @@ class _ResultsPageState extends State<ResultsPage> {
                 ],
               ),
               const SizedBox(height: 24),
-<<<<<<< HEAD
-              
-              // Primary Feedback
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF7F5FFF).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    width: 2,
-                    style: BorderStyle.solid,
-                    color: Colors.transparent,
-                  ),
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF4F8CFF), Color(0xFF7F5FFF), Color(0xFFFF5CA8)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Primary Feedback:',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF7F5FFF),
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'You\'re overstriding slightly.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Detailed Feedback
-              Text(
-                'Your foot is landing too far in front of your center of gravity, which can lead to braking forces and increased injury risk. Try to focus on landing with your foot closer to directly under your hips.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white.withValues(alpha: 0.8),
-                  height: 1.5,
-                ),
-              ),
-              
-              const SizedBox(height: 12),
-              
-              Text(
-                'Your cadence appears to be around 165 steps per minute. Consider increasing to 170-180 for optimal efficiency.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white.withValues(alpha: 0.8),
-                  height: 1.5,
-                ),
-              ),
-              
-              const SizedBox(height: 12),
-              
-              Text(
-                'Overall, your upper body posture looks great! Keep that slight forward lean and relaxed shoulders.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white.withValues(alpha: 0.8),
-                  height: 1.5,
-                ),
-              ),
-=======
               // Dynamic Feedback Tips
               if (_tips.isNotEmpty)
                 ..._tips.map((tip) => Padding(
@@ -516,7 +366,6 @@ class _ResultsPageState extends State<ResultsPage> {
                     color: Colors.white70,
                   ),
                 ),
->>>>>>> 2d14dde8878430ab47627e4d21c9445228732826
             ],
           ),
         ),
