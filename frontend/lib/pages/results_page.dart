@@ -21,6 +21,7 @@ class _ResultsPageState extends State<ResultsPage> {
   Future<void>? _initializeVideoPlayerFuture;
   bool _isInitialized = false;
   String? _videoError;
+  List<String> _tips = [];
 
   @override
   void didChangeDependencies() {
@@ -28,6 +29,9 @@ class _ResultsPageState extends State<ResultsPage> {
     final extra = GoRouterState.of(context).extra;
     if (extra is Map<String, dynamic> && extra['processed_video_url'] != null) {
       _videoUrl = extra['processed_video_url'];
+      if (extra['analysis'] is Map && extra['analysis']['tips'] is List) {
+        _tips = List<String>.from(extra['analysis']['tips']);
+      }
       _controller = VideoPlayerController.networkUrl(Uri.parse(_videoUrl!))
         ..initialize().then((_) {
           setState(() {});
@@ -200,19 +204,6 @@ class _ResultsPageState extends State<ResultsPage> {
                     : Container(),
               ),
               const SizedBox(height: 16),
-              // Debug: Show processed_video_url
-              if (_videoUrl != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Text(
-                    'Video URL: $_videoUrl',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.white70,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
               // Video controls
               Row(
                 children: [
@@ -323,76 +314,36 @@ class _ResultsPageState extends State<ResultsPage> {
                   ),
                 ],
               ),
-              
               const SizedBox(height: 24),
-              
-              // Primary Feedback
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF06B6D4).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color(0xFF06B6D4).withOpacity(0.2),
+              // Dynamic Feedback Tips
+              if (_tips.isNotEmpty)
+                ..._tips.map((tip) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('• ', style: TextStyle(color: Color(0xFF06B6D4), fontSize: 16)),
+                      Expanded(
+                        child: Text(
+                          tip,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                            height: 1.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+              if (_tips.isEmpty)
+                const Text(
+                  'No feedback available.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
                   ),
                 ),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Primary Feedback:',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF06B6D4),
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'You\'re overstriding slightly.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Detailed Feedback
-              Text(
-                'Your foot is landing too far in front of your center of gravity, which can lead to braking forces and increased injury risk. Try to focus on landing with your foot closer to directly under your hips.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white.withOpacity(0.8),
-                  height: 1.5,
-                ),
-              ),
-              
-              const SizedBox(height: 12),
-              
-              Text(
-                'Your cadence appears to be around 165 steps per minute. Consider increasing to 170-180 for optimal efficiency.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white.withOpacity(0.8),
-                  height: 1.5,
-                ),
-              ),
-              
-              const SizedBox(height: 12),
-              
-              Text(
-                'Overall, your upper body posture looks great! Keep that slight forward lean and relaxed shoulders.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white.withOpacity(0.8),
-                  height: 1.5,
-                ),
-              ),
             ],
           ),
         ),
